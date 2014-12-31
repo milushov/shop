@@ -1,0 +1,16 @@
+{
+  "name": "shop",
+  "version": "0.0.0",
+  "description": "web developer code challenge for backend softwared developer position at SwiftGift",
+  "main": "app.js",
+  "scripts": {
+    "test": "idnt"
+  },
+  "keywords": [
+    "coffee",
+    "js",
+    "swiftgift"
+  ],
+  "author": "roma milushov",
+  "license": "ISC"
+}
