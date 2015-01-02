@@ -25,7 +25,7 @@ performRequest = (url, pageN = 2, callback) ->
       item = $(el)
 
       randPrice = (Math.random()*7000).toFixed(2)
-      price = item.find('.s-price:first-child').text()
+      price = parseFloat(item.find('.s-price:first-child').text())
       price = price || randPrice
       price = price.split('$')[1] || randPrice
 
@@ -52,14 +52,16 @@ for category, url of urls
                 console.info('fail', data.error)
                 callback(data.error, null)
               else
-                callback(null, data)
+                callback(null, {cat: category, items: data})
 
-      async.series requests, (err, data) ->
+      async.series requests, (err, items_array) ->
         console.info('task completed \n')
-        for category, items of data
-          results[category] = results[category] || []
-          results[category] = results[category].concat(items)
-        callback(null, data)
+
+        for items in items_array
+          results[items.cat] = results[items.cat] || []
+          results[items.cat] = results[items.cat].concat(items.items)
+
+        callback(null, true)
 
 
 async.series tasks, (err, data) ->
@@ -68,37 +70,36 @@ async.series tasks, (err, data) ->
 
   merchants = null
 
-  for category_name, items of results
-    db.sequelize.sync(force: true)
-    .then ->
-      db.Merchant.create(name: 'First merchant')
-      db.Merchant.create(name: 'Second merchant')
+  db.sequelize.sync(force: true)
+  .then ->
+    db.Merchant.create(name: 'First merchant')
+    db.Merchant.create(name: 'Second merchant')
 
-    .then ->
-      db.Merchant.findAll()
+  .then ->
+    db.Merchant.findAll()
 
-    .then (mers) ->
-      console.info('------------', mers.length)
-      merchants = mers
-      db.Category.create(name: category_name)
+  .then (mers) ->
+    merchants = mers
 
-    .then (category) ->
-      # damage! I haven't found multiple creation in sequelize docs
-      # so go ahead with async for using its finish callback
-      tasks = []
+    for category_name, items of results
+      do (category_name, items) ->
+        db.Category.create(name: category_name).then (category) ->
+          # damage! I haven't found multiple creation in sequelize docs
+          # so go ahead with async for using its finish callback
+          tasks = []
 
-      for item in items
-        do (item) ->
-          tasks.push (callback) ->
-            db.Product.create(item).then (prod) ->
-              callback(null, prod)
+          for item in items
+            do (item) ->
+              tasks.push (callback) ->
+                db.Product.create(item).then (prod) ->
+                  callback(null, prod)
 
-      async.series tasks, (err, products) ->
-        for merch, i in merchants
-          _products = products.filter (el, j) -> (j + 1) % merchants.length is i
-          merch.setProducts(_products)
+          async.series tasks, (err, products) ->
+            for merch, i in merchants
+              _products = products.filter (el, j) -> (j + 1) % merchants.length is i
+              merch.setProducts(_products)
 
-        category.setProducts(products)
+            category.setProducts(products)
 
 
 
