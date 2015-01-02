@@ -17,7 +17,7 @@ module.exports =
       price:
         type: DataTypes.FLOAT
 
-      merchant_id:
+      merchantId:
         type: DataTypes.INTEGER
 
       createdAt:

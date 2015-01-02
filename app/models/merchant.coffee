@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) ->
   ,
     classMethods:
       associate: (models) ->
+        # wtf!? why i should specify foreignkey!?
+        models.Merchant.hasMany(models.Product, foreignKey: 'merchantId')
   )
-  
-  # associations can be defined here
+
   Merchant

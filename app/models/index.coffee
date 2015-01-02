@@ -13,11 +13,9 @@ fs.readdirSync(__dirname).filter((file) ->
 ).forEach (file) ->
   model = sequelize["import"](path.join(__dirname, file))
   db[model.name] = model
-  return
 
 Object.keys(db).forEach (modelName) ->
   db[modelName].associate db  if "associate" of db[modelName]
-  return
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize

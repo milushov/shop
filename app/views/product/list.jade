@@ -6,6 +6,9 @@ block title
 block content
   h1 Product list
 
-  each product, i in [{name: 123}, {name: 123}, {name: 123}, {name: 123}]
-    .col-xs-3.col-sm-3
-      | product #{product.name}
+  if products.length
+    each product, i in products
+      .col-xs-3.col-sm-3
+        #{product.name}
+  else
+    | product list empty

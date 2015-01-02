@@ -8,10 +8,10 @@ module.exports =
         primaryKey: true
         type: DataTypes.INTEGER
 
-      category_id:
+      categoryId:
         type: DataTypes.INTEGER
 
-      product_id:
+      productId:
         type: DataTypes.INTEGER
 
       createdAt:

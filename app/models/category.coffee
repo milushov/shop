@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) ->
   ,
     classMethods:
       associate: (models) ->
+        models.Category.belongsToMany(models.Product, through: 'CategoriesProducts')
   )
-  
-  # associations can be defined here
-  Category.belongsToMany(Product, through: 'CategoriesProducts')
+
+  Category

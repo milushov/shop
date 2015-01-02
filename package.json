@@ -43,6 +43,9 @@
     "gulp-debug": "^1.0.1",
     "sqlite3": "^3.0.4",
     "sequelize": "^2.0.0-rc4",
-    "sequelize-cli": "^1.0.2"
+    "sequelize-cli": "^1.0.2",
+    "cheerio": "^0.18.0",
+    "request": "^2.51.0",
+    "async": "^0.9.0"
   }
 }

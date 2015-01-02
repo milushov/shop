@@ -4,11 +4,11 @@ module.exports = (sequelize, DataTypes) ->
     image: DataTypes.STRING
     name: DataTypes.STRING
     price: DataTypes.FLOAT
-    merchant_id: DataTypes.INTEGER
+    merchantId: DataTypes.INTEGER
   ,
     classMethods:
       associate: (models) ->
+        models.Product.belongsToMany(models.Category, through: 'CategoriesProducts', as: 'Tasks')
   )
-  
-  # associations can be defined here
-  Product.belongsToMany(Category, through: 'CategoriesProducts')
+
+  Product
