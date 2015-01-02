@@ -17,12 +17,13 @@ db.sequelize.sync()
   .then (products) ->
     for product in products
       _words = product.name.split(' ')
-      for _word in _words
+
+      for _word in _words[0..100]
         _word = _word.trim()
-        unless ~uniqWords.indexOf(_word) || parseInt(_word) > 0
-          _word = _word.replace(/[\(\),\.\!&-]/g, '')
-          if _word.length >= 2
-            uniqWords.push(_word)
+        _word = _word.replace(/[\(\),\.\!&]/g, '')
+
+        if !~uniqWords.indexOf(_word) && !parseInt(_word) > 0 && _word.length >= 2
+          uniqWords.push(_word)
 
     for word in uniqWords
       _word = word.split('')
