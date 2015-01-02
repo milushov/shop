@@ -8,7 +8,6 @@ block content
 
   if products.length
     each product, i in products
-      .col-xs-3.col-sm-3
-        #{product.name}
+      include _product
   else
     | product list empty
