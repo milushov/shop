@@ -2,6 +2,9 @@ express = require('express')
 app     = express()
 db = require('./models')
 
+app.set('perPage', 12)
+
+
 app.set('port', (process.env.PORT || 3000))
 app.set('db', db)
 

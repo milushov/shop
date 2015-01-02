@@ -1,18 +1,20 @@
-nav
-  ul.pagination
-    li
-      a(href='#', aria-label='Previous')
-        span(aria-hidden='true') &laquo;
-    li
-      a(href='#') 1
-    li
-      a(href='#') 2
-    li
-      a(href='#') 3
-    li
-      a(href='#') 4
-    li
-      a(href='#') 5
-    li
-      a(href='#', aria-label='Next')
-        span(aria-hidden='true') &raquo;
+// prevPage
+// nextPage
+// pageNumbers
+// curPage
+// products
+
+if pagesNumbers
+  .text-center
+    ul.pagination
+      if prevPage
+        li: a(href="?page=#{prevPage}", aria-label='Previous')
+          span(aria-hidden='true') &laquo;
+
+      for pageN in pagesNumbers
+        li(class="#{pageN == curPage ? 'active' : ''}")
+          a(href="?page=#{pageN}") #{pageN}
+
+      if nextPage
+        li: a(href="?page=#{nextPage}", aria-label='Next')
+          span(aria-hidden='true') &raquo;
