@@ -18,7 +18,7 @@ db.sequelize.sync()
     for product in products
       _words = product.name.split(' ')
 
-      for _word in _words[0..100]
+      for _word in _words
         _word = _word.trim()
         _word = _word.replace(/[\(\),\.\!&]/g, '')
 
