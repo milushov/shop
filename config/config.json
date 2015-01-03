@@ -15,10 +15,6 @@
     "dialect": "mysql"
   },
   "production": {
-    "dialect": "postgres",
-    "protocol": "postgres",
-    "host": "ec2-54-83-27-26.compute-1.amazonaws.com",
-    "port": 5432,
-    "logging: true"
+    "use_env_variable": "DATABASE_URL"
   }
 }

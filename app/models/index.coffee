@@ -3,9 +3,21 @@ fs = require("fs")
 path = require("path")
 Sequelize = require("sequelize")
 basename = path.basename(module.filename)
-env = if process.env.HEROKU_POSTGRESQL_NAVY_URL then "production" else "development"
+env = process.env.NODE_ENV or "development"
 config = require(__dirname + "/../../config/config.json")[env]
-sequelize = new Sequelize(config.database, config.username, config.password, config)
+
+if process.env.HEROKU_POSTGRESQL_NAVY_URL
+  match = process.env.HEROKU_POSTGRESQL_BRONZE_URL.match(/postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/)
+  sequelize = new Sequelize(match[5], match[1], match[2],
+    dialect: "postgres"
+    protocol: "postgres"
+    port: match[4]
+    host: match[3]
+    logging: true
+  )
+else
+  sequelize = new Sequelize(config.database, config.username, config.password, config)
+
 db = {}
 
 fs.readdirSync(__dirname).filter((file) ->
