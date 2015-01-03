@@ -1,5 +1,10 @@
 hashify = require('../../lib/hashify').hashify
 
+exports.before = (req, res, next) ->
+  console.info('before')
+  req.pagination = {}
+  next()
+
 # product list
 exports.list = (req, res, next) ->
 
