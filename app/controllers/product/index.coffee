@@ -8,7 +8,7 @@ exports.show = (req, res, next) ->
   db  = req.app.get('db')
   pid = req.params.product_id
 
-  # find wih include params doesn't working :-(
+  # find with include params doesn't working :-(
   prms = {
     where: id: pid
     limit: 1
@@ -16,7 +16,6 @@ exports.show = (req, res, next) ->
   }
   db.Product.findAll(prms).then (products) ->
     res.render 'show', product: products[0]
-
 
 
 # product list
@@ -47,7 +46,7 @@ exports.search = (req, res, next) ->
   res.locals.q = q = req.param('q') || ''
 
   if q
-    db.Product.count(where: ['name like ?', "%#{q}%"]).then (count) ->
+    db.Product.count(where: ['lower(name) like lower(?)', "%#{q}%"]).then (count) ->
       if !count
         db.Dictionary.findAll(where: hash: hashify(q)).then (words) ->
           if words.length
@@ -63,7 +62,7 @@ exports.search = (req, res, next) ->
 
 exports.byCategory = (req, res, next) ->
   db = req.app.get('db')
-  cid = req.param('category_id') 
+  cid = req.param('category_id')
   db.Category.find(cid).then (category) ->
     res.locals.category = category
     next()
@@ -71,7 +70,7 @@ exports.byCategory = (req, res, next) ->
 
 exports.byMerchant = (req, res, next) ->
   db = req.app.get('db')
-  mid = req.param('merchant_id') 
+  mid = req.param('merchant_id')
   db.Merchant.find(mid).then (merchant) ->
     res.locals.merchant = merchant
     next()
@@ -125,11 +124,11 @@ exports.paginate = (req, res, next) ->
     next()
 
 
-# just helper
+# just a helper
 whereCond = (req, q) ->
   if req.filter is 'search'
     query = q || req.param('q')
-    ['name like ?', "%#{query}%"]
+    ['lower(name) like lower(?)', "%#{query}%"]
   else if req.filter is 'byMerchant'
     merchantId: req.param('merchant_id')
 
