@@ -49,7 +49,7 @@ module.exports = (parent, options) ->
       handler     = obj[key]
       path        = prefix + path
       args        = [path]
-      middlewares = [obj.before, obj.paginate, obj.search, handler]
+      middlewares = [obj.before, obj.search, obj.paginate, handler]
       middlewares = middlewares.filter (el) -> el
       args        = args.concat(middlewares)
 

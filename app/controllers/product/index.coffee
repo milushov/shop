@@ -5,32 +5,35 @@ exports.search = (req, res, next) ->
   db = req.app.get('db')
   res.locals.q = q = req.param('q') || ''
 
-  getPrms = (q) ->
-    where:   if q then ['name like ?', "%#{q}%"]
-    offset:  req.offset
-    limit:   req.limit
-    include: [db.Category]
-
   if q
-    db.Product.findAll(getPrms(q)).then (products) ->
-      if products.length
-        (res.locals.products = products) && next()
-      else
+    db.Product.count(where: ['name like ?', "%#{q}%"]).then (count) ->
+      if !count
         db.Dictionary.findAll(where: hash: hashify(q)).then (words) ->
           if words.length
-            db.Product.findAll(getPrms(corrected_q)).then (products) ->
-              res.locals.products = products
-              (res.locals.corrected_q = words[0].word) && next()
+            res.locals.corrected_q = words[0].word
+            next()
           else
-            (res.locals.products = products) && next()
-
+            next()
+      else
+        next()
   else
-    db.Product.findAll(getPrms()).then (products) ->
-      (res.locals.products = products) && next()
+    next()
+
 
 # product list
 exports.list = (req, res, next) ->
-  res.render 'list'
+  db    = req.app.get('db')
+  query = res.locals.corrected_q || res.locals.q
+  prms  = {
+    where:   ['name like ?', "%#{query}%"]
+    offset:  req.offset
+    limit:   req.limit
+    include: [db.Category]
+  }
+
+  db.Product.findAll(prms).then (products) ->
+    res.render 'list', products: products
+
 
 # product page
 exports.show = (req, res, next) ->
@@ -42,14 +45,15 @@ exports.paginate = (req, res, next) ->
   curPage = parseInt(req.param('page')) || 1
   perPage = req.app.get('perPage')
   db      = req.app.get('db')
+  query   = res.locals.corrected_q || res.locals.q
 
-  db.Product.count().then (count) ->
+  db.Product.count(where: ['name like ?', "%#{query}%"]).then (count) ->
     lastPage    = Math.round(count/perPage)
     isLastPage  = curPage >= lastPage
     prevPage    = unless curPage is 1 then curPage - 1
     nextPage    = unless isLastPage then curPage + 1
     offset      = perPage * (curPage - 1)
-    outerWindow = 4
+    outerWindow = Math.min(lastPage/2, 4)
 
     pagesNumbers = if curPage <= outerWindow
       [1..(outerWindow*2+1)]
