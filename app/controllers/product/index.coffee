@@ -76,7 +76,7 @@ exports.paginate = (req, res, next) ->
       curPage:      curPage
       prevPage:     prevPage
       nextPage:     nextPage
-      pagesNumbers: pagesNumbers
+      pagesNumbers: if count > perPage then pagesNumbers
     }
 
     extend(false, res.locals, pagination)

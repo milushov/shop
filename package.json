@@ -4,7 +4,7 @@
   "description": "web developer code challenge for backend softwared developer position at SwiftGift",
   "main": "app.js",
   "scripts": {
-    "test": "idnt"
+    "test": "mocha test"
   },
   "keywords": [
     "coffee",
@@ -49,6 +49,9 @@
     "async": "^0.9.0",
     "MD5": "^1.2.1",
     "pg": "^4.1.1",
-    "extend": "^2.0.0"
+    "extend": "^2.0.0",
+    "chai-http": "^1.0.0",
+    "q": "^1.1.2",
+    "zombie": "^2.5.1"
   }
 }

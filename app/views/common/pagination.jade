@@ -8,7 +8,7 @@ if pagesNumbers
   .text-center
     ul.pagination
       if prevPage
-        li: a(href="?page=#{prevPage}", aria-label='Previous')
+        li.prev: a(href="?page=#{prevPage}", aria-label='Previous')
           span(aria-hidden='true') &laquo;
 
       for pageN in pagesNumbers
@@ -16,5 +16,5 @@ if pagesNumbers
           a(href="#{buildParams(pageN, q)}") #{pageN}
 
       if nextPage
-        li: a(href="?page=#{nextPage}", aria-label='Next')
+        li.next: a(href="?page=#{nextPage}", aria-label='Next')
           span(aria-hidden='true') &raquo;
