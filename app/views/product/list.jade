@@ -4,19 +4,24 @@ block title
   title Product list
 
 block content
-  h1 Product list
-  h1 #{yo}
+  h1
+    | Product list
+    if q
+      |, found for "#{q}"
+
 
   if corrected_q
     h3
       | Did you mean 
       b
-        | #{corrected_q}
+        | "#{corrected_q}"
       | ?
-      | If so, we showing results..
+      | If so, we show you some results..
 
   if products.length
-    each product, i in products
-      include _product
+    each products_row in products
+      .row.product-row
+        each product in products_row
+          include _product
   else
     | Product list empty

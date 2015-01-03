@@ -1,6 +1,33 @@
 hashify = require('../../lib/hashify').hashify
 extend  = require('extend')
 
+# product list
+exports.list = (req, res, next) ->
+  db    = req.app.get('db')
+  query = res.locals.corrected_q || res.locals.q
+  prms  = {
+    where:   ['name like ?', "%#{query}%"]
+    offset:  req.offset
+    limit:   req.limit
+    include: [db.Category]
+  }
+
+  db.Product.findAll(prms).then (products) ->
+    _products = []
+    while(products.length)
+      _products.push(products.splice(0,4))
+    res.render 'list', products: _products
+
+
+# product page
+exports.show = (req, res, next) ->
+  db  = req.app.get('db')
+  pid = req.params.product_id
+
+  db.Product.find(pid, include: [db.Category]).then (product) ->
+    res.render 'show', product: product
+
+
 exports.search = (req, res, next) ->
   db = req.app.get('db')
   res.locals.q = q = req.param('q') || ''
@@ -18,26 +45,6 @@ exports.search = (req, res, next) ->
         next()
   else
     next()
-
-
-# product list
-exports.list = (req, res, next) ->
-  db    = req.app.get('db')
-  query = res.locals.corrected_q || res.locals.q
-  prms  = {
-    where:   ['name like ?', "%#{query}%"]
-    offset:  req.offset
-    limit:   req.limit
-    include: [db.Category]
-  }
-
-  db.Product.findAll(prms).then (products) ->
-    res.render 'list', products: products
-
-
-# product page
-exports.show = (req, res, next) ->
-  res.send('product ' + req.params.product_id)
 
 
 # pagination middleware

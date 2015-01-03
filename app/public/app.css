@@ -1,5 +1,5 @@
 .app {
-  padding-top: 30px;
+  padding-top: 50px;
 }
 
 .product {
@@ -8,4 +8,8 @@
 
 .product-category {
   margin-right: 7px;
+}
+
+.product-row {
+  margin-bottom: 10px;
 }
