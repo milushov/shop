@@ -1,7 +1,7 @@
 express     = require('express')
-app = module.exports = express()
 db          = require('./models')
 extend      = require('extend')
+app         = module.exports = express()
 viewHelpers = require('./lib/view_helpers').helpers
 
 app.use (req, res, next) ->
@@ -16,7 +16,7 @@ app.locals.pretty = true
 app.use(express.static(__dirname + '/public'))
 
 # load controllers
-require('./lib/load_controllers')(app, { verbose: no })
+require('./lib/load_controllers')(app, verbose: no)
 
 app.use (err, req, res, next) ->
   console.error(err.stack)

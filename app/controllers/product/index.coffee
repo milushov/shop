@@ -1,6 +1,21 @@
 hashify = require('../../lib/hashify').hashify
 extend  = require('extend')
 
+# product page
+exports.show = (req, res, next) ->
+  db  = req.app.get('db')
+  pid = req.params.product_id
+
+  # find wih include params doesn't working :-(
+  prms = {
+    where: id: pid
+    limit: 1
+    include: [db.Category, db.Merchant]
+  }
+  db.Product.findAll(prms).then (products) ->
+    res.render 'show', product: products[0]
+
+
 # product list
 exports.list = (req, res, next) ->
   db    = req.app.get('db')
@@ -17,16 +32,6 @@ exports.list = (req, res, next) ->
     while(products.length)
       _products.push(products.splice(0,4))
     res.render 'list', products: _products
-
-
-# product page
-exports.show = (req, res, next) ->
-  db  = req.app.get('db')
-  pid = req.params.product_id
-
-  # find wih include params doesn't working :-(
-  db.Product.findAll(where: {id: pid}, limit: 1, include: [db.Category, db.Merchant]).then (products) ->
-    res.render 'show', product: products[0]
 
 
 exports.search = (req, res, next) ->
@@ -54,6 +59,7 @@ exports.paginate = (req, res, next) ->
   perPage = req.app.get('perPage')
   db      = req.app.get('db')
   query   = res.locals.corrected_q || res.locals.q
+
 
   db.Product.count(where: ['name like ?', "%#{query}%"]).then (count) ->
     lastPage    = Math.round(count/perPage)
