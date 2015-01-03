@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) ->
   ,
     classMethods:
       associate: (models) ->
-        models.Product.belongsToMany(models.Category, through: 'CategoriesProducts', as: 'Tasks')
+        models.Product.belongsToMany(models.Category, through: 'CategoriesProducts')
   )
 
   Product

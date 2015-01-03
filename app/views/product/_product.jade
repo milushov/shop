@@ -1,4 +1,17 @@
-.col-xs-3.col-sm-3
-  img(src=product.image)
-  | #{product.name}
-  | price #{product.price}
+.col-xs-3.col-sm-3.product
+  .row.text-center
+    img(src=product.image)
+    //-span.product-price.label.label-danger $#{product.price}
+
+  .row
+    span.product-price.label.label-danger $#{product.price}
+
+  .row
+    //-= truncate(product.name, 50)
+    a(href="/products/#{product.id}")
+      = product.name.substr(0, 50) + '..'
+
+  .row
+    for category in product.Categories
+      a.product-category.label.label-primary(href="/categories/#{category.id}") #{category.name}
+

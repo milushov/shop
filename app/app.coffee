@@ -2,6 +2,9 @@ express = require('express')
 app     = express()
 db = require('./models')
 
+#app.locals.truncate = (str, length) ->
+  #str.substr(0, length) + '..'
+
 app.set('perPage', 12)
 
 

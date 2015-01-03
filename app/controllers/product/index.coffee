@@ -22,14 +22,15 @@ exports.list = (req, res, next) ->
       right = [curPage..(curPage + outerWindow)]
       left.concat(right)
 
-    db.Product.findAll(offset: offset, limit: perPage).then (products) ->
-      res.render 'list', {
-        products:     products
-        curPage:      curPage
-        prevPage:     prevPage
-        nextPage:     nextPage
-        pagesNumbers: pagesNumbers
-      }
+    db.Product.findAll(offset: offset, limit: perPage, include: [db.Category])
+      .then (products) ->
+        res.render 'list', {
+          products:     products
+          curPage:      curPage
+          prevPage:     prevPage
+          nextPage:     nextPage
+          pagesNumbers: pagesNumbers
+        }
 
 # product page
 exports.show = (req, res, next) ->

@@ -1,3 +1,7 @@
+# this variant of seed file only for development proccess,
+# for a small bunch of items, not for pruduction
+
+
 request   = require('request')
 cheerio   = require('cheerio')
 async     = require('async')
@@ -12,6 +16,7 @@ urls      = {
 }
 
 
+# request for getting remote page and parse products content
 performRequest = (url, pageN = 2, callback) ->
   console.info("  performing request for page #{pageN}")
   _url = "#{url}&page=#{pageN}"
@@ -42,6 +47,7 @@ for category, url of urls
     tasks.push (callback) ->
       console.info("start task for category #{category}")
 
+      # array of functions for getting remote data
       requests = []
 
       for pageN in [2..LAST_PAGE]
@@ -54,6 +60,7 @@ for category, url of urls
               else
                 callback(null, {cat: category, items: data})
 
+      # accumulating data from all pages
       async.series requests, (err, items_array) ->
         console.info('task completed \n')
 
@@ -81,6 +88,7 @@ async.series tasks, (err, data) ->
   .then (mers) ->
     merchants = mers
 
+    # accumulating data from all categories
     for category_name, items of results
       do (category_name, items) ->
         db.Category.create(name: category_name).then (category) ->
@@ -88,23 +96,27 @@ async.series tasks, (err, data) ->
           # so go ahead with async for using its finish callback
           tasks = []
 
+          # getting prepare array of functions
           for item in items
             do (item) ->
               tasks.push (callback) ->
                 db.Product.create(item).then (prod) ->
                   callback(null, prod)
 
+          # getting bunch of products and set merchant for them
           async.series tasks, (err, products) ->
             for merch, i in merchants
-              _products = products.filter (el, j) -> (j + 1) % merchants.length is i
+              _products = products.filter (el, j) ->
+                (j + 1) % merchants.length is i
               merch.setProducts(_products)
 
             category.setProducts(products)
 
-
-
-
-
-
+            # asume that all categories already created
+            db.Category.findAll().then (cats) ->
+              for prod in products
+                do (prod) ->
+                  new_cats = cats.filter((el) -> Math.round(Math.random()))
+                  prod.setCategories(new_cats)
 
 
