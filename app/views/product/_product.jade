@@ -14,6 +14,7 @@
       for category in product.Categories
         a.product-category.label.label-primary(href="/products?category_id=#{category.id}") #{category.name}
 
-  .row
-    a(href="/products?merchant_id=#{product.Merchant.id}") #{product.Merchant.name}
+  if product.Merchant
+    .row
+      a(href="/products?merchant_id=#{product.Merchant.id}") #{product.Merchant.name}
 
