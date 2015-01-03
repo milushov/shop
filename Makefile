@@ -16,4 +16,12 @@ test-w:
 		--no-exit \
 		--inline-diffs
 
+install:
+	npm install
+	bower install
+	./node_modules/gulp/bin/gulp.js build
+	./node_modules/coffee-script/bin/coffee seed.coffee
+	./node_modules/coffee-script/bin/coffee build_dictionary.coffee
+	./node_modules/coffee-script/bin/coffee app/app.coffee
+
 .PHONY: test test-w
