@@ -11,7 +11,8 @@
     a(href="/products/#{product.id}")
       = product.name.substr(0, 50) + '..'
 
-  .row
-    for category in product.Categories
-      a.product-category.label.label-primary(href="/categories/#{category.id}") #{category.name}
+  if product.Categories
+    .row
+      for category in product.Categories
+        a.product-category.label.label-primary(href="/categories/#{category.id}") #{category.name}
 

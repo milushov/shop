@@ -1,7 +1,7 @@
-async             = require('async')
-db                = require('./app/models')
-md5               = require('MD5')
-uniqWords         = []
+async     = require('async')
+db        = require('./app/models')
+uniqWords = []
+hashify   = require('./app/lib/hashify').hashify
 
 
 db.sequelize.sync()
@@ -26,10 +26,4 @@ db.sequelize.sync()
           uniqWords.push(_word)
 
     for word in uniqWords
-      _word = word.split('')
-      _word = _word.map (el) -> el.toLowerCase(el)
-      _word = _word.sort()
-      _word = _word.join('')
-      hash = md5(_word)
-
-      db.Dictionary.create(word: word, hash: hash, popularity: 1)
+      db.Dictionary.create(word: word, hash: hashify(word), popularity: 1)

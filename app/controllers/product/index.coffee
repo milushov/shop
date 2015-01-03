@@ -1,5 +1,8 @@
+hashify = require('../../lib/hashify').hashify
+
 # product list
 exports.list = (req, res, next) ->
+
   curPage = parseInt(req.param('page')) || 1
   perPage = req.app.get('perPage')
   db      = req.app.get('db')
@@ -22,15 +25,37 @@ exports.list = (req, res, next) ->
       right = [curPage..(curPage + outerWindow)]
       left.concat(right)
 
-    db.Product.findAll(offset: offset, limit: perPage, include: [db.Category])
-      .then (products) ->
-        res.render 'list', {
-          products:     products
-          curPage:      curPage
-          prevPage:     prevPage
-          nextPage:     nextPage
-          pagesNumbers: pagesNumbers
-        }
+
+    if q = req.param('q')
+      hash = hashify(q)
+      db.Product.findAll(where: ['name like ?', "%#{q}%"]).then (products) ->
+        if products.length
+          res.render 'list', {
+            products: products
+          }
+        else
+          db.Dictionary.findAll(where: hash: hash).then (words) ->
+            if words.length
+              suggest = words[0].word
+              db.Product.findAll(where: ['name like ?', "%#{suggest}%"]).then (products) ->
+                res.render 'list', {
+                  products: products
+                  suggest: suggest
+                }
+            else
+              res.render 'list', products: []
+
+
+    else
+      db.Product.findAll(offset: offset, limit: perPage, include: [db.Category])
+        .then (products) ->
+          res.render 'list', {
+            products:     products
+            curPage:      curPage
+            prevPage:     prevPage
+            nextPage:     nextPage
+            pagesNumbers: pagesNumbers
+          }
 
 # product page
 exports.show = (req, res, next) ->

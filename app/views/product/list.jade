@@ -6,8 +6,16 @@ block title
 block content
   h1 Product list
 
+  if suggest
+    h3
+      | Did you mean 
+      b
+        | #{suggest}
+      | ?
+      | If so, we showing results..
+
   if products.length
     each product, i in products
       include _product
   else
-    | product list empty
+    | Product list empty
