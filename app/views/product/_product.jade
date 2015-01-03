@@ -7,9 +7,8 @@
     span.product-price.label.label-danger $#{product.price}
 
   .row
-    //-= truncate(product.name, 50)
     a(href="/products/#{product.id}")
-      = product.name.substr(0, 50) + '..'
+      = truncate(product.name, 50)
 
   if product.Categories
     .row

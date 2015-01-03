@@ -1,6 +1,3 @@
-###*
-Module dependencies.
-###
 express = require('../../node_modules/express/lib/express')
 fs = require('fs')
 
@@ -23,7 +20,7 @@ module.exports = (parent, options) ->
     for key of obj
 
       # 'reserved' exports
-      continue  if ~['name', 'prefix', 'engine', 'before'].indexOf(key)
+      continue  if ~['name', 'prefix', 'engine', 'before', 'paginate', 'search'].indexOf(key)
 
       # route exports
       switch key
@@ -46,21 +43,18 @@ module.exports = (parent, options) ->
           method = 'get'
           path = '/'
         else
-
-          # istanbul ignore next 
           throw new Error('unrecognized route: ' + name + '.' + key)
 
       # setup
-      handler = obj[key]
-      path = prefix + path
+      handler     = obj[key]
+      path        = prefix + path
+      args        = [path]
+      middlewares = [obj.before, obj.paginate, obj.search, handler]
+      middlewares = middlewares.filter (el) -> el
+      args        = args.concat(middlewares)
 
-      # before middleware support
-      if obj.before
-        app[method] path, obj.before, handler
-        verbose and console.log('     %s %s -> before -> %s', method.toUpperCase(), path, key)
-      else
-        app[method] path, obj[key]
-        verbose and console.log('     %s %s -> %s', method.toUpperCase(), path, key)
+      app[method].apply(app, args)
+      verbose and console.log('     %s %s -> %s', method.toUpperCase(), path, key)
 
     # mount the app
     parent.use app

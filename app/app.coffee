@@ -1,13 +1,20 @@
 express = require('express')
 app     = express()
-db = require('./models')
+db      = require('./models')
+extend  = require('extend')
 
-#app.locals.truncate = (str, length) ->
-  #str.substr(0, length) + '..'
+app.use (req, res, next) ->
+  res.locals.truncate = (str, length) ->
+    str.substr(0, length) + '..'
+
+  res.locals.buildParams = (page, q='') ->
+    params = ["page=#{page}", "q=#{q}"]
+    params = params.filter (el) -> el.split('=')[1]
+    '?' + params.join('&')
+
+  next()
 
 app.set('perPage', 12)
-
-
 app.set('port', (process.env.PORT || 3000))
 app.set('db', db)
 

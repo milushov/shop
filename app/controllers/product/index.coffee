@@ -1,13 +1,44 @@
 hashify = require('../../lib/hashify').hashify
+extend  = require('extend')
 
-exports.before = (req, res, next) ->
-  console.info('before')
-  req.pagination = {}
-  next()
+exports.search = (req, res, next) ->
+  db = req.app.get('db')
+  res.locals.q = q = req.param('q') || ''
+
+  getPrms = (q) ->
+    where:   if q then ['name like ?', "%#{q}%"]
+    offset:  req.offset
+    limit:   req.limit
+    include: [db.Category]
+
+  if q
+    db.Product.findAll(getPrms(q)).then (products) ->
+      if products.length
+        (res.locals.products = products) && next()
+      else
+        db.Dictionary.findAll(where: hash: hashify(q)).then (words) ->
+          if words.length
+            db.Product.findAll(getPrms(corrected_q)).then (products) ->
+              res.locals.products = products
+              (res.locals.corrected_q = words[0].word) && next()
+          else
+            (res.locals.products = products) && next()
+
+  else
+    db.Product.findAll(getPrms()).then (products) ->
+      (res.locals.products = products) && next()
 
 # product list
 exports.list = (req, res, next) ->
+  res.render 'list'
 
+# product page
+exports.show = (req, res, next) ->
+  res.send('product ' + req.params.product_id)
+
+
+# pagination middleware
+exports.paginate = (req, res, next) ->
   curPage = parseInt(req.param('page')) || 1
   perPage = req.app.get('perPage')
   db      = req.app.get('db')
@@ -30,38 +61,16 @@ exports.list = (req, res, next) ->
       right = [curPage..(curPage + outerWindow)]
       left.concat(right)
 
+    pagination = {
+      curPage:      curPage
+      prevPage:     prevPage
+      nextPage:     nextPage
+      pagesNumbers: pagesNumbers
+    }
 
-    if q = req.param('q')
-      hash = hashify(q)
-      db.Product.findAll(where: ['name like ?', "%#{q}%"]).then (products) ->
-        if products.length
-          res.render 'list', {
-            products: products
-          }
-        else
-          db.Dictionary.findAll(where: hash: hash).then (words) ->
-            if words.length
-              suggest = words[0].word
-              db.Product.findAll(where: ['name like ?', "%#{suggest}%"]).then (products) ->
-                res.render 'list', {
-                  products: products
-                  suggest: suggest
-                }
-            else
-              res.render 'list', products: []
+    extend(false, res.locals, pagination)
 
+    req.offset = offset
+    req.limit  = perPage
 
-    else
-      db.Product.findAll(offset: offset, limit: perPage, include: [db.Category])
-        .then (products) ->
-          res.render 'list', {
-            products:     products
-            curPage:      curPage
-            prevPage:     prevPage
-            nextPage:     nextPage
-            pagesNumbers: pagesNumbers
-          }
-
-# product page
-exports.show = (req, res, next) ->
-  res.send('product ' + req.params.product_id)
+    next()

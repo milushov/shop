@@ -5,12 +5,13 @@ block title
 
 block content
   h1 Product list
+  h1 #{yo}
 
-  if suggest
+  if corrected_q
     h3
       | Did you mean 
       b
-        | #{suggest}
+        | #{corrected_q}
       | ?
       | If so, we showing results..
 
