@@ -6,7 +6,7 @@
     "host": "127.0.0.1",
     "dialect": "sqlite",
     "storage": "development.sqlite",
-    "logging": false
+    "logging": true
   },
   "production": {
     "use_env_variable": "DATABASE_URL"
