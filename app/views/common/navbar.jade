@@ -10,11 +10,11 @@ nav.navbar.navbar-inverse.navbar-fixed-top
 
     #navbar.collapse.navbar-collapse
       ul.nav.navbar-nav
-        li.active
+        li(class="#{activeSection('/products')}")
           a(href='/products') Products
-        li
+        li(class="#{activeSection('/categorys')}")
           a(href='/categorys') Categories
-        li
+        li(class="#{activeSection('/merchants')}")
           a(href='/merchants') Merchants
 
       .col-sm-3.col-md-3.pull-right

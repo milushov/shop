@@ -24,8 +24,9 @@ exports.show = (req, res, next) ->
   db  = req.app.get('db')
   pid = req.params.product_id
 
-  db.Product.find(pid, include: [db.Category, db.Merchant]).then (product) ->
-    res.render 'show', product: product
+  # find wih include params doesn't working :-(
+  db.Product.findAll(where: {id: pid}, limit: 1, include: [db.Category, db.Merchant]).then (products) ->
+    res.render 'show', product: products[0]
 
 
 exports.search = (req, res, next) ->

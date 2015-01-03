@@ -19,8 +19,8 @@ describe 'Search', ->
       .get('/products?q=apple')
       .then (res) ->
         $ = cheerio.load(res.text)
-        itemCount = $('.product').length
-        expect(itemCount).to.be.above(1)
+        itemsCount = $('.product').length
+        expect(itemsCount).to.be.above(1)
 
   it 'should search items with case insensitive query', ->
     query = 'aPpLe'

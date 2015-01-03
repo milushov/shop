@@ -5,7 +5,7 @@ extend      = require('extend')
 viewHelpers = require('./lib/view_helpers').helpers
 
 app.use (req, res, next) ->
-  extend(false, res.locals, viewHelpers) && next()
+  extend(false, res.locals, viewHelpers(req)) && next()
 
 app.set('port', (process.env.PORT || 3000))
 app.set('db', db)
