@@ -7,7 +7,7 @@ env = process.env.NODE_ENV or "development"
 config = require(__dirname + "/../../config/config.json")[env]
 
 if process.env.HEROKU_POSTGRESQL_NAVY_URL
-  match = process.env.HEROKU_POSTGRESQL_BRONZE_URL.match(/postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/)
+  match = process.env.HEROKU_POSTGRESQL_NAVY_URL.match(/postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/)
   sequelize = new Sequelize(match[5], match[1], match[2],
     dialect: "postgres"
     protocol: "postgres"
