@@ -87,7 +87,7 @@ exports.paginate = (req, res, next) ->
   fetcher = if req.filter is 'byCategory'
     res.locals.category.getProducts()
   else
-    db.Product.count(where: whereCond(req))
+    db.Product.count(where: whereCond(req, query))
 
   fetcher.then (data) ->
     count = data.length || data
