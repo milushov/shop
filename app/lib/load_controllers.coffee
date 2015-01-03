@@ -18,47 +18,47 @@ module.exports = (parent, options) ->
 
     # generate routes based
     # on the exported methods
-    for key of obj
+    if obj.customController
+      parent.use require("../routes/#{name}").routes(app, obj)
+    else
+      for key of obj
 
-      # 'reserved' exports
-      continue  if ~['name', 'prefix', 'engine', 'before', 'paginate', 'search'].indexOf(key)
+        # 'reserved' exports
+        continue  if ~['name', 'prefix', 'engine', 'before'].indexOf(key)
 
-      # route exports
-      switch key
-        when 'show'
-          method = 'get'
-          path = "/#{name}s/:#{name}_id"
-        when 'list'
-          method = 'get'
-          path = "/#{name}s"
-        when 'edit'
-          method = 'get'
-          path = "/#{name}s/:#{name}_id/edit"
-        when 'update'
-          method = 'put'
-          path = "/#{name}s/:#{name}_id"
-        when 'create'
-          method = 'post'
-          path = "/#{name}s"
-        when 'index'
-          method = 'get'
-          path = '/'
-        else
-          throw new Error('unrecognized route: ' + name + '.' + key)
+        # route exports
+        switch key
+          when 'show'
+            method = 'get'
+            path = "/#{name}s/:#{name}_id"
+          when 'list'
+            method = 'get'
+            path = "/#{name}s"
+          when 'edit'
+            method = 'get'
+            path = "/#{name}s/:#{name}_id/edit"
+          when 'update'
+            method = 'put'
+            path = "/#{name}s/:#{name}_id"
+          when 'create'
+            method = 'post'
+            path = "/#{name}s"
+          when 'index'
+            method = 'get'
+            path = '/'
+          else
+            throw new Error('unrecognized route: ' + name + '.' + key)
 
-      # setup
-      handler     = obj[key]
-      path        = prefix + path
-      args        = [path]
-      if key is 'list'
-        middlewares = [obj.before, obj.search, obj.paginate, handler]
-      else
+        # setup
+        handler     = obj[key]
+        path        = prefix + path
+        args        = [path]
         middlewares = [obj.before, handler]
-      middlewares = middlewares.filter (el) -> el
-      args        = args.concat(middlewares)
+        middlewares = middlewares.filter (el) -> el
+        args        = args.concat(middlewares)
 
-      app[method].apply(app, args)
-      verbose and console.log('     %s %s -> %s', method.toUpperCase(), path, key)
+        app[method].apply(app, args)
+        verbose and console.log('     %s %s -> %s', method.toUpperCase(), path, key)
 
-    # mount the app
-    parent.use app
+      # mount the app
+      parent.use app

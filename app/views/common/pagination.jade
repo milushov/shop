@@ -13,7 +13,7 @@ if pagesNumbers
 
       for pageN in pagesNumbers
         li(class="#{pageN == curPage ? 'active' : ''}")
-          a(href="#{buildParams(pageN, q)}") #{pageN}
+          a(href="#{buildParams(pageN, q, category, merchant)}") #{pageN}
 
       if nextPage
         li.next: a(href="?page=#{nextPage}", aria-label='Next')

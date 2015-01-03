@@ -12,8 +12,8 @@
   if product.Categories
     .row
       for category in product.Categories
-        a.product-category.label.label-primary(href="/categorys/#{category.id}") #{category.name}
+        a.product-category.label.label-primary(href="/products?category_id=#{category.id}") #{category.name}
 
   .row
-    a(href="/merchants/#{product.Merchant.id}") #{product.Merchant.name}
+    a(href="/products?merchant_id=#{product.Merchant.id}") #{product.Merchant.name}
 

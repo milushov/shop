@@ -21,6 +21,24 @@ describe 'Routes', ->
       expect(itemsCount).to.be.above(1)
 
 
+  it '/products?category_id=1', ->
+    chai.request(url).get(@._runnable.title).then (res) ->
+      expect(res).to.have.status(200)
+
+      $ = cheerio.load(res.text)
+      itemsCount = $('.product').length
+      expect(itemsCount).to.be.above(1)
+
+
+  it '/products?merchant_id=1', ->
+    chai.request(url).get(@._runnable.title).then (res) ->
+      expect(res).to.have.status(200)
+
+      $ = cheerio.load(res.text)
+      itemsCount = $('.product').length
+      expect(itemsCount).to.be.above(1)
+
+
   it '/products/:product_id', ->
     chai.request(url).get('/products/1').then (res) ->
       expect(res).to.have.status(200)
@@ -34,34 +52,8 @@ describe 'Routes', ->
     chai.request(url).get('/categorys').then (res) ->
       expect(res).to.have.status(200)
 
-      $ = cheerio.load(res.text)
-      itemsCount = $('.product').length
-      expect(itemsCount).to.be.above(1)
-
-
-  it '/categorys/:category_id', ->
-    chai.request(url).get('/categorys/1').then (res) ->
-      expect(res).to.have.status(200)
-
-      $ = cheerio.load(res.text)
-      itemsCount = $('.product').length
-      expect(itemsCount).to.be.equal(1)
-
 
   it '/merchants', ->
     chai.request(url).get('/categorys').then (res) ->
       expect(res).to.have.status(200)
-
-      $ = cheerio.load(res.text)
-      itemsCount = $('.merchant').length
-      expect(itemsCount).to.be.above(1)
-
-
-  it '/merchants/:merchant_id', ->
-    chai.request(url).get('/merchants/1').then (res) ->
-      expect(res).to.have.status(200)
-
-      $ = cheerio.load(res.text)
-      itemsCount = $('merchant').length
-      expect(itemsCount).to.be.equal(1)
 

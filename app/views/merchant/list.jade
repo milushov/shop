@@ -10,6 +10,6 @@ block content
   if items.length
     .list-group
       each item in items
-        a.list-group-item(href="/products?mid=#{item.id}") #{item.name}
+        a.list-group-item(href="/products?merchant_id=#{item.id}") #{item.name}
   else
     | Merchant list empty

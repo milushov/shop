@@ -1,6 +1,8 @@
 hashify = require('../../lib/hashify').hashify
 extend  = require('extend')
 
+exports.customController = yes
+
 # product page
 exports.show = (req, res, next) ->
   db  = req.app.get('db')
@@ -16,22 +18,28 @@ exports.show = (req, res, next) ->
     res.render 'show', product: products[0]
 
 
+
 # product list
 exports.list = (req, res, next) ->
   db    = req.app.get('db')
   query = res.locals.corrected_q || res.locals.q
   prms  = {
-    where:   ['name like ?', "%#{query}%"]
+    where:   whereCond(req, query)
     offset:  req.offset
     limit:   req.limit
     include: [db.Category, db.Merchant]
   }
 
-  db.Product.findAll(prms).then (products) ->
+  fetcher = if req.filter is 'byCategory'
+    res.locals.category.getProducts(prms)
+  else
+    db.Product.findAll(prms)
+
+  fetcher.then (products) ->
     _products = []
     while(products.length)
       _products.push(products.splice(0,4))
-    res.render 'list', products: _products
+    res.render req.filter, products: _products
 
 
 exports.search = (req, res, next) ->
@@ -53,6 +61,22 @@ exports.search = (req, res, next) ->
     next()
 
 
+exports.byCategory = (req, res, next) ->
+  db = req.app.get('db')
+  cid = req.param('category_id') 
+  db.Category.find(cid).then (category) ->
+    res.locals.category = category
+    next()
+
+
+exports.byMerchant = (req, res, next) ->
+  db = req.app.get('db')
+  mid = req.param('merchant_id') 
+  db.Merchant.find(mid).then (merchant) ->
+    res.locals.merchant = merchant
+    next()
+
+
 # pagination middleware
 exports.paginate = (req, res, next) ->
   curPage = parseInt(req.param('page')) || 1
@@ -60,8 +84,15 @@ exports.paginate = (req, res, next) ->
   db      = req.app.get('db')
   query   = res.locals.corrected_q || res.locals.q
 
+  # fuck you, sequelize
+  fetcher = if req.filter is 'byCategory'
+    res.locals.category.getProducts()
+  else
+    db.Product.count(where: whereCond(req))
 
-  db.Product.count(where: ['name like ?', "%#{query}%"]).then (count) ->
+  fetcher.then (data) ->
+    count = data.length || data
+
     lastPage    = Math.round(count/perPage)
     isLastPage  = curPage >= lastPage
     prevPage    = unless curPage is 1 then curPage - 1
@@ -92,3 +123,14 @@ exports.paginate = (req, res, next) ->
     req.limit  = perPage
 
     next()
+
+
+# just helper
+whereCond = (req, q) ->
+  if req.filter is 'search'
+    query = q || req.param('q')
+    ['name like ?', "%#{query}%"]
+  else if req.filter is 'byMerchant'
+    merchantId: req.param('merchant_id')
+
+

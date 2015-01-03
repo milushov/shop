@@ -4,10 +4,11 @@ block title
   title Product list
 
 block content
-  h1
-    | Product list
-    if q
-      |, found for "#{q}"
+  block pageHeader
+    h1
+      | Product list
+      if q
+        |, found for "#{q}"
 
 
   if corrected_q
