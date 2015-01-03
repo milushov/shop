@@ -9,7 +9,7 @@ exports.list = (req, res, next) ->
     where:   ['name like ?', "%#{query}%"]
     offset:  req.offset
     limit:   req.limit
-    include: [db.Category]
+    include: [db.Category, db.Merchant]
   }
 
   db.Product.findAll(prms).then (products) ->
@@ -24,7 +24,7 @@ exports.show = (req, res, next) ->
   db  = req.app.get('db')
   pid = req.params.product_id
 
-  db.Product.find(pid, include: [db.Category]).then (product) ->
+  db.Product.find(pid, include: [db.Category, db.Merchant]).then (product) ->
     res.render 'show', product: product
 
 

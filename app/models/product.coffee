@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) ->
     classMethods:
       associate: (models) ->
         models.Product.belongsToMany(models.Category, through: 'CategoriesProducts')
+        models.Product.belongsTo(models.Merchant, foreignKey: 'merchantId')
   )
 
   Product

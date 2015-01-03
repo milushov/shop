@@ -9,6 +9,7 @@ module.exports = (parent, options) ->
     name = obj.name or name
     prefix = obj.prefix or ''
     app = express()
+    app.locals.pretty = true
 
     # allow specifying the view engine
     app.set 'view engine', obj.engine  if obj.engine
@@ -49,7 +50,10 @@ module.exports = (parent, options) ->
       handler     = obj[key]
       path        = prefix + path
       args        = [path]
-      middlewares = [obj.before, obj.search, obj.paginate, handler]
+      if key is 'list'
+        middlewares = [obj.before, obj.search, obj.paginate, handler]
+      else
+        middlewares = [obj.before, handler]
       middlewares = middlewares.filter (el) -> el
       args        = args.concat(middlewares)
 

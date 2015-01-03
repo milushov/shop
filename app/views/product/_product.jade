@@ -1,7 +1,6 @@
 .col-xs-3.col-sm-3.product
   .row.text-center
     img(src=product.image)
-    //-span.product-price.label.label-danger $#{product.price}
 
   .row
     span.product-price.label.label-danger $#{product.price}
@@ -14,4 +13,7 @@
     .row
       for category in product.Categories
         a.product-category.label.label-primary(href="/categorys/#{category.id}") #{category.name}
+
+  .row
+    a(href="/merchants/#{product.Merchant.id}") #{product.Merchant.name}
 
