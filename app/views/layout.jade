@@ -21,6 +21,7 @@ head
       include common/pagination
 
     include common/footer
-    include common/counter
+    unless isDev
+      include common/counter
 
 

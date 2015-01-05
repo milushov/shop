@@ -6,6 +6,7 @@ viewHelpers = require('./lib/view_helpers').helpers
 
 app.use (req, res, next) ->
   extend(false, res.locals, viewHelpers(req)) && next()
+  res.locals.isDev = !process.env.PORT?
 
 port = if process.env.PORT
   process.env.PORT
