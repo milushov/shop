@@ -14,7 +14,6 @@ module.exports = (parent, options) ->
     # allow specifying the view engine
     app.set 'view engine', obj.engine  if obj.engine
     app.set 'views', __dirname + '/../views/' + name
-    console.info(app.get('views'))
 
     # generate routes based
     # on the exported methods

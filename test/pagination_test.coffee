@@ -8,7 +8,7 @@ app  = require('../app/app')
 
 chai.use(chaiHttp)
 chai.request.addPromises(require('q').Promise)
-url = 'http://localhost:3000'
+url = 'http://localhost:3001'
 
 describe 'Pagination', ->
   it 'should working', ->
@@ -71,7 +71,7 @@ describe 'Pagination', ->
 
   it 'should working with search', ->
     query = 'apple'
-    chai.request('http://localhost:3000')
+    chai.request(url)
       .get('/products?q=apple&page=1')
       .then (res) ->
         db.Product.count(where: ['name like ?', "%#{query}%"]).then (count) ->

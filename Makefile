@@ -1,5 +1,6 @@
 #REPORTER = nyan
 REPORTER = spec
+#REPORTER = min
 
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
@@ -16,6 +17,14 @@ test-w:
 		--no-exit \
 		--inline-diffs
 
+nyan-w:
+	@NODE_ENV=test ./node_modules/.bin/mocha \
+		--compilers coffee:coffee-script/register \
+		--reporter nyan \
+		--watch \
+		--no-exit \
+		--inline-diffs
+
 install:
 	npm install
 	bower install
@@ -24,4 +33,4 @@ install:
 	./node_modules/coffee-script/bin/coffee build_dictionary.coffee
 	./node_modules/coffee-script/bin/coffee app/app.coffee
 
-.PHONY: test test-w
+.PHONY: test test-w nyan-w

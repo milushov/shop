@@ -8,7 +8,7 @@ app  = require('../app/app')
 
 chai.use(chaiHttp)
 chai.request.addPromises(require('q').Promise)
-url = 'http://localhost:3000'
+url = 'http://localhost:3001'
 
 
 describe 'Routes', ->
