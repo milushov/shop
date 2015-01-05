@@ -17,7 +17,6 @@ exports.show = (req, res, next) ->
   db.Product.findAll(prms).then (products) ->
     res.render 'show', product: products[0]
 
-
 # product list
 exports.list = (req, res, next) ->
   db    = req.app.get('db')
