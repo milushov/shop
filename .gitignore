@@ -4,3 +4,4 @@ bower_components
 development.sqlite
 .sass-cache
 .sass-cache/*
+npm-debug.log

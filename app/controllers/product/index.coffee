@@ -42,15 +42,15 @@ exports.list = (req, res, next) ->
 
 exports.search = (req, res, next) ->
   db = req.app.get('db')
-  res.locals.q = q = req.param('q') || ''
+  q = res.locals.q = req.param('q') || ''
 
+  # fuckin next fn calls, i hate this
   if q
-    db.Product.count(where: ['lower(name) like lower(?)', "%#{q}%"]).then (count) ->
+    db.Product.count(where: whereCond(req)).then (count) ->
       if !count
-        db.Dictionary.findAll(where: hash: hashify(q)).then (words) ->
+        db.Dictionary.findAll(where: whereCondDict(q)).then (words) ->
           if words.length
-            res.locals.corrected_q = words[0].word
-            next()
+            (res.locals.corrected_q = buildCorrectedQuery(q, words)) && next()
           else
             next()
       else
@@ -124,11 +124,34 @@ exports.paginate = (req, res, next) ->
 
 
 # just a helper
-whereCond = (req, q) ->
+whereCond = (req, corrected_q) ->
   if req.filter is 'search'
-    query = q || req.param('q')
-    ['lower(name) like lower(?)', "%#{query}%"]
+    query = corrected_q || req.param('q')
+    query.split(' ')
+      .map((el) -> "lower(name) like lower('%#{el}%')")
+      .join(' or ')
   else if req.filter is 'byMerchant'
     merchantId: req.param('merchant_id')
 
 
+whereCondDict = (q) ->
+  q
+    .split(' ')
+    .map((el) -> hashify(el))
+    .map((el) -> "hash = '#{el}'")
+    .join(' or ')
+
+
+ # if word from query the same word from dictionary,
+ # we leave it, else change it to word from dictionary
+buildCorrectedQuery = (q, words) ->
+  hashes = words.map (el) -> el.hash
+
+  a = q
+    .split(' ')
+    .map((el) -> el.toLowerCase())
+    .map (el) ->
+      hash = hashify(el)
+      if ~(ind = hashes.indexOf(hash)) then words[ind].word
+      else el
+    .join(' ')

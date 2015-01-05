@@ -11,7 +11,7 @@ require('./spec_helper')(app)
 chai.use(chaiHttp)
 chai.request.addPromises(require('q').Promise)
 
-describe 'Search', ->
+describe.only 'Search', ->
   it 'should working', ->
     chai.request(url).get('/products?q=apple').then (res) ->
       expect(res).to.have.status(200)
@@ -44,14 +44,14 @@ describe 'Search', ->
 
 
   it 'should search items with two and more words', ->
-    typo_query = 'apple iphone'
-    chai.request(url).get("/products?q=#{typo_query}").then (res) ->
+    query = 'apple iphone'
+    chai.request(url).get("/products?q=#{query}").then (res) ->
       $ = cheerio.load(res.text)
       itemCount = $('.product').length
-      h3 = $('.container>h3').text()
+      h3 = $('.container>h1').text()
 
       expect(itemCount).to.be.above(1)
-      expect(h3).to.be.contain('Apple iPhone')
+      expect(h3).to.be.contain(query)
 
 
   it 'should search items with two and more misspelled words', ->
@@ -65,7 +65,7 @@ describe 'Search', ->
       expect(h3).to.be.contain('Apple iPhone')
 
 
-  it.only 'full text search items with two and more misspelled words', ->
+  it 'full text search items with two and more misspelled words', ->
     typo_query = 'ipohne blakc'
     chai.request(url).get("/products?q=#{typo_query}").then (res) ->
       $ = cheerio.load(res.text)
@@ -73,4 +73,4 @@ describe 'Search', ->
       h3 = $('.container>h3').text()
 
       expect(itemCount).to.be.above(1)
-      expect(h3).to.be.contain('iPhone black')
+      expect(h3).to.be.contain('iPhone Black')
