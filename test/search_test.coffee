@@ -11,7 +11,7 @@ require('./spec_helper')(app)
 chai.use(chaiHttp)
 chai.request.addPromises(require('q').Promise)
 
-describe.only 'Search', ->
+describe 'Search', ->
   it 'should working', ->
     chai.request(url).get('/products?q=apple').then (res) ->
       expect(res).to.have.status(200)
